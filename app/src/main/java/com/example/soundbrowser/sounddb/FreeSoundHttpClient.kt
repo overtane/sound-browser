@@ -2,7 +2,8 @@ package com.example.soundbrowser.sounddb
 
 import android.util.Log
 import com.example.soundbrowser.BuildConfig
-import io.ktor.client.*
+import io.ktor.client.HttpClient
+import io.ktor.client.call.body
 import io.ktor.client.engine.cio.CIO
 import io.ktor.client.plugins.DefaultRequest
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
@@ -10,20 +11,21 @@ import io.ktor.client.plugins.logging.LogLevel
 import io.ktor.client.plugins.logging.Logger
 import io.ktor.client.plugins.logging.Logging
 import io.ktor.client.plugins.observer.ResponseObserver
-import io.ktor.client.request.*
-import io.ktor.client.statement.*
+import io.ktor.client.request.get
+import io.ktor.client.request.header
 import io.ktor.http.ContentType
 import io.ktor.http.HttpHeaders
 import io.ktor.http.appendPathSegments
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
 
-private val API_KEY = BuildConfig.API_KEY
+private const val API_KEY = BuildConfig.API_KEY
 private const val SERVICE = "https://freesound.org/"
 
 private const val DEFAULT_FILTER =
     "duration:[10 TO 60] samplerate:[8000 TO 48000] bitdepth:16 channels:[1 TO 2]"
 
+//private const val DEFAULT_FIELDS = "id,name,type,duration,samplerate,channels"
 private const val DEFAULT_FIELDS = "id,name,type,duration,samplerate,channels,images"
 
 private const val TIMEOUT: Long = 6000
@@ -44,11 +46,11 @@ object FreeSoundHttpClient {
         install(Logging) {
             logger = object : Logger {
                 override fun log(message: String) {
-                    Log.v("Logger Ktor =>", message)
+                    Log.v("Ktor", message)
                 }
 
             }
-            level = LogLevel.ALL
+            level = LogLevel.ALL  // change NONE to ALL for HTTP-logging
         }
         install(ResponseObserver) {
             onResponse { response ->
@@ -60,17 +62,16 @@ object FreeSoundHttpClient {
         }
     }
 
-    suspend fun search(query: String): String {
-        val response = instance.get(SERVICE) {
+    suspend fun get(query: String, page: Int): SoundDbResponse =
+        instance.get(SERVICE) {
             url {
                 appendPathSegments( "apiv2", "search", "text")
                 parameters.append("token", API_KEY)
                 parameters.append("query", query)
-                parameters.append("page_size", "15")
+                parameters.append("page", page.toString())
+                //parameters.append("page_size", "5")
                 parameters.append("filter", DEFAULT_FILTER)
                 parameters.append("fields", DEFAULT_FIELDS)
             }
-        }
-        return response.bodyAsText()
-    }
+        }.body()
 }
