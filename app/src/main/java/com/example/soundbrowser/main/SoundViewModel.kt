@@ -1,5 +1,6 @@
 package com.example.soundbrowser.main
 
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
@@ -14,14 +15,26 @@ class SoundViewModel(
     private var repository: SoundRepository,
 ) : ViewModel() {
 
-    // The Pager object calls the load() method from the PagingSource object,
-    // providing it with the LoadParams object and receiving the LoadResult object in return.
-    val flow: Flow<PagingData<SoundDbResult>> = Pager(
-        config = PagingConfig(pageSize = 15),
-        pagingSourceFactory = { repository.soundPagingSource("piano") }
-    ).flow
-        .cachedIn(viewModelScope)
+    val resultCount = 199
+    val resultCountString = MutableLiveData<String>()
 
+    lateinit var flow: Flow<PagingData<SoundDbResult>>
+
+    init {
+        resultCountString.value = "$resultCount sounds found"
+        startSearch("piano")
+    }
+
+    fun startSearch(query: String?) {
+        // TODO refresh everything: HTTP Request, pager, paging adapter, everything!
+        // The Pager object calls the load() method from the PagingSource object,
+        // providing it with the LoadParams object and receiving the LoadResult object in return.
+        flow = Pager(
+            config = PagingConfig(pageSize = 15),
+            pagingSourceFactory = { repository.soundPagingSource(query!!) }
+        ).flow
+            .cachedIn(viewModelScope)
+    }
 }
 
 
