@@ -11,16 +11,24 @@ class SoundPagingSource(
     private val query: String
 ) : PagingSource<Int, SoundDbResult>() {
 
+    var count = 0
+    init {
+        Log.d("SoundPagingSource" ,"New query: $query")
+    }
+
     override suspend fun load(
         params: LoadParams<Int>
     ): LoadResult<Int, SoundDbResult> {
         return try {
             val page = params.key ?: 1
             val response = backend.get(query, page)
+            count = response.count
+            Log.d("SoundPagingSource" ,"Page: $page, count: $count")
             LoadResult.Page(
                 data = response.results,
                 prevKey = if (response.previous == null) null else page - 1,
                 nextKey = if (response.next == null) null else page + 1
+
             )
         } catch (e: Exception) {
             LoadResult.Error(e)

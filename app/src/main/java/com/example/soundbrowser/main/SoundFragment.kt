@@ -21,18 +21,21 @@ class SoundFragment : Fragment() {
 
     private lateinit var viewModel: SoundViewModel
     private lateinit var binding: FragmentSoundListBinding
+    private lateinit var adapter: SoundPagingDataAdapter
+    private lateinit var repository: SoundRepository
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentSoundListBinding.inflate(layoutInflater)
+        repository = SoundRepository()
         viewModel = ViewModelProvider(
             this,
-            SoundViewModelFactory(SoundRepository())
+            SoundViewModelFactory(repository)
         )[SoundViewModel::class.java]
 
-        val adapter = SoundPagingDataAdapter()
+        adapter = SoundPagingDataAdapter()
         binding.soundList.adapter = adapter
         binding.viewModel = viewModel
 
@@ -52,11 +55,12 @@ class SoundFragment : Fragment() {
 
                 override fun onQueryTextSubmit(query: String?): Boolean {
                     Log.d("SearchView", "Query text submit: $query")
-                    viewModel.startSearch(query)
+                    viewModel.query = query ?: SoundViewModel.DEFAULT_QUERY
+                    adapter.refresh()
                     return false
                 }
             })
-            queryHint = "piano"
+            queryHint = SoundViewModel.DEFAULT_QUERY
             imeOptions = EditorInfo.IME_ACTION_SEARCH
             inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_NORMAL
         }
