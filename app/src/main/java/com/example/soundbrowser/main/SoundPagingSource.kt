@@ -1,6 +1,5 @@
 package com.example.soundbrowser.main
 
-import android.util.Log
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.example.soundbrowser.sounddb.FreeSoundHttpClient
