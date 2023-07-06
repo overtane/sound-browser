@@ -22,28 +22,27 @@ class SoundFragment : Fragment() {
     private lateinit var viewModel: SoundViewModel
     private lateinit var binding: FragmentSoundListBinding
     private lateinit var adapter: SoundPagingDataAdapter
-    private lateinit var repository: SoundRepository
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentSoundListBinding.inflate(layoutInflater)
-        repository = SoundRepository()
         viewModel = ViewModelProvider(
             this,
-            SoundViewModelFactory(repository)
+            SoundViewModelFactory(SoundRepository())
         )[SoundViewModel::class.java]
 
         adapter = SoundPagingDataAdapter()
-        binding.soundList.adapter = adapter
+
+        binding = FragmentSoundListBinding.inflate(layoutInflater)
+        binding.lifecycleOwner = viewLifecycleOwner
         binding.viewModel = viewModel
+        binding.soundList.adapter = adapter
 
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.flow.collectLatest { pagingData ->
-                    adapter.submitData(pagingData)
-                }
+                viewModel.flow
+                    .collectLatest { pagingData -> adapter.submitData(pagingData) }
             }
         }
 

@@ -5,21 +5,20 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.map
 import androidx.lifecycle.viewModelScope
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
-import androidx.paging.PagingData
 import androidx.paging.cachedIn
-import com.example.soundbrowser.sounddb.SoundDbResult
-import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.launch
 
 class SoundViewModel(
-    private var repository: SoundRepository,
+    private val repository: SoundRepository,
 ) : ViewModel() {
 
-    val resultCountString: LiveData<String> =
-        repository.count.map { count -> "$count sounds found" }
+    private val _resultCount = MutableLiveData<String>()
+    val resultCount: LiveData<String>
+        get() = _resultCount
+
     var query: String = DEFAULT_QUERY
 
     // The Pager object calls the load() method from the PagingSource object,
@@ -29,6 +28,18 @@ class SoundViewModel(
         pagingSourceFactory = { repository.soundPagingSource(query) }
     ).flow
         .cachedIn(viewModelScope)
+
+    private val counts = repository.observeCount()
+    private fun collectCounts() = viewModelScope.launch {
+        counts.collect {
+            _resultCount.postValue("$it sounds found")
+            Log.d("SoundViewModel", "${resultCount.value}")
+        }
+    }
+
+    init {
+        collectCounts()
+    }
 
     companion object {
         const val DEFAULT_QUERY = "piano"
