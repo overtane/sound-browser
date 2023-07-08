@@ -2,22 +2,22 @@ package com.example.soundbrowser.main
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
-import com.example.soundbrowser.sounddb.FreeSoundHttpClient
-import com.example.soundbrowser.sounddb.SoundDbResult
+import com.example.soundbrowser.freesound.FreeSoundHttpClient
+import com.example.soundbrowser.freesound.FreeSoundResult
 import kotlinx.coroutines.channels.Channel
 
 class SoundPagingSource(
     private val backend: FreeSoundHttpClient,
     private val query: String,
     private val counts: Channel<Int>
-) : PagingSource<Int, SoundDbResult>() {
+) : PagingSource<Int, FreeSoundResult>() {
 
     override suspend fun load(
         params: LoadParams<Int>
-    ): LoadResult<Int, SoundDbResult> {
+    ): LoadResult<Int, FreeSoundResult> {
         return try {
             val page = params.key ?: 1
-            val response = backend.get(query, page)
+            val response = backend.search(query, page)
             counts.send(response.count)
             LoadResult.Page(
                 data = response.results,
@@ -29,12 +29,6 @@ class SoundPagingSource(
         }
     }
 
-    override fun getRefreshKey(state: PagingState<Int, SoundDbResult>): Int? {
-        val key = state.anchorPosition?.let { anchorPosition ->
-            val anchorPage = state.closestPageToPosition(anchorPosition)
-            anchorPage?.prevKey?.plus(1) ?: anchorPage?.nextKey?.minus(1)
-        }
-        return key
-    }
-
+    // Always start new query from the first page
+    override fun getRefreshKey(state: PagingState<Int, FreeSoundResult>): Int? = null
 }

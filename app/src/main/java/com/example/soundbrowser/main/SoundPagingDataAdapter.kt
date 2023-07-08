@@ -6,8 +6,8 @@ import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import com.example.soundbrowser.databinding.FragmentSoundItemBinding
 
-class SoundPagingDataAdapter :
-    PagingDataAdapter<Sound, SoundItemViewHolder>(DIFFCALLBACK) {
+class SoundPagingDataAdapter(val clickListener: SoundItemClickListener) :
+    PagingDataAdapter<SoundListItem, SoundItemViewHolder>(DIFFCALLBACK) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = SoundItemViewHolder(
         FragmentSoundItemBinding.inflate(
@@ -20,18 +20,18 @@ class SoundPagingDataAdapter :
     override fun onBindViewHolder(holder: SoundItemViewHolder, position: Int) {
         val item = getItem(position)
         if (item != null) {
-            holder.bind(position, item)
+            holder.bind(position, item, clickListener)
         }
     }
 
     companion object {
-        private val DIFFCALLBACK = object : DiffUtil.ItemCallback<Sound>() {
-            override fun areItemsTheSame(oldItem: Sound, newItem: Sound): Boolean =
+        private val DIFFCALLBACK = object : DiffUtil.ItemCallback<SoundListItem>() {
+            override fun areItemsTheSame(oldItem: SoundListItem, newItem: SoundListItem): Boolean =
                 oldItem.id == newItem.id
 
             override fun areContentsTheSame(
-                oldItem: Sound,
-                newItem: Sound
+                oldItem: SoundListItem,
+                newItem: SoundListItem
             ): Boolean =
                 oldItem == newItem
         }

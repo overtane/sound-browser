@@ -6,12 +6,17 @@
     <data>
         <variable
             name="sound"
-            type="com.example.soundbrowser.main.Sound"/>
+            type="com.example.soundbrowser.main.SoundListItem"/>
+        <variable
+            name="clickListener"
+            type="com.example.soundbrowser.main.SoundItemClickListener"/>
     </data>
+
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="72dp">
+        android:layout_height="72dp"
+        android:onClick="@{() -> clickListener.onClick(sound.id)}">
 
         <TextView
             android:id="@+id/item_number"

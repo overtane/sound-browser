@@ -16,12 +16,13 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.soundbrowser.databinding.FragmentSoundListBinding
+import com.example.soundbrowser.details.SoundDetailsDialog
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 class SoundFragment : Fragment() {
 
-    private lateinit var viewModel: SoundViewModel
+    private lateinit var myViewModel: SoundViewModel
     private lateinit var binding: FragmentSoundListBinding
     private lateinit var adapter: SoundPagingDataAdapter
 
@@ -29,47 +30,51 @@ class SoundFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        viewModel = ViewModelProvider(
+        myViewModel = ViewModelProvider(
             this,
             SoundViewModelFactory(SoundRepository())
         )[SoundViewModel::class.java]
 
-        adapter = SoundPagingDataAdapter()
+        adapter = SoundPagingDataAdapter(SoundItemClickListener { id ->
+            Log.d("SoundItemClickListener", "Clicked item $id")
+            val dialog = SoundDetailsDialog.newInstance("", "")
+            dialog.show(childFragmentManager, "SoundDetailsDialog")
+        })
 
-        binding = FragmentSoundListBinding.inflate(layoutInflater)
-        binding.lifecycleOwner = viewLifecycleOwner
-        binding.soundList.addItemDecoration(
-            DividerItemDecoration(
-                context,
-                LinearLayoutManager.VERTICAL
+        binding = FragmentSoundListBinding.inflate(layoutInflater).apply {
+            viewModel = myViewModel
+            lifecycleOwner = viewLifecycleOwner
+
+            soundList.adapter = adapter
+            soundList.addItemDecoration(
+                DividerItemDecoration(
+                    context,
+                    LinearLayoutManager.VERTICAL
+                )
             )
-        )
-        binding.viewModel = viewModel
-        binding.soundList.adapter = adapter
 
-        viewLifecycleOwner.lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.flow
-                    .collectLatest { pagingData -> adapter.submitData(pagingData) }
+            searchView.apply {
+                setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+                    override fun onQueryTextChange(newText: String?): Boolean =  false
+
+                    override fun onQueryTextSubmit(query: String?): Boolean {
+                        Log.d("SearchView", "Query text submit: $query")
+                        myViewModel.query = query ?: SoundViewModel.DEFAULT_QUERY
+                        adapter.refresh()
+                        return false
+                    }
+                })
+                queryHint = SoundViewModel.DEFAULT_QUERY
+                imeOptions = EditorInfo.IME_ACTION_SEARCH
+                inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_NORMAL
             }
         }
 
-        binding.searchView.apply {
-            setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-                override fun onQueryTextChange(newText: String?): Boolean {
-                    return false
-                }
-
-                override fun onQueryTextSubmit(query: String?): Boolean {
-                    Log.d("SearchView", "Query text submit: $query")
-                    viewModel.query = query ?: SoundViewModel.DEFAULT_QUERY
-                    adapter.refresh()
-                    return false
-                }
-            })
-            queryHint = SoundViewModel.DEFAULT_QUERY
-            imeOptions = EditorInfo.IME_ACTION_SEARCH
-            inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_NORMAL
+        viewLifecycleOwner.lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                myViewModel.flow
+                    .collectLatest { pagingData -> adapter.submitData(pagingData) }
+            }
         }
 
         return binding.root

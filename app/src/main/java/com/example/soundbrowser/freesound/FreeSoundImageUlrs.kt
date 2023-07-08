@@ -1,9 +1,9 @@
-package com.example.soundbrowser.sounddb
+package com.example.soundbrowser.freesound
 
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class SoundDbImageUlrs(
+data class FreeSoundImageUlrs(
     val waveform_m: String,
     val waveform_l: String,
     val spectral_m: String,

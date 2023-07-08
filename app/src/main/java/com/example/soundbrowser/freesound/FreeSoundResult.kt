@@ -1,14 +1,12 @@
-package com.example.soundbrowser.sounddb
+package com.example.soundbrowser.freesound
 
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class SoundDbResult(
+data class FreeSoundResult(
     val id: Int,
     val name: String,
-    val type: String,
-    val channels: Int,
     val duration: Double,
     val samplerate: Double,
-    val images: SoundDbImageUlrs
+    val images: FreeSoundImageUlrs
 )

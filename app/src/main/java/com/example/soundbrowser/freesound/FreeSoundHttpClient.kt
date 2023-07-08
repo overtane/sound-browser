@@ -1,4 +1,4 @@
-package com.example.soundbrowser.sounddb
+package com.example.soundbrowser.freesound
 
 import android.util.Log
 import com.example.soundbrowser.BuildConfig
@@ -22,11 +22,16 @@ import kotlinx.serialization.json.Json
 private const val API_KEY = BuildConfig.API_KEY
 private const val SERVICE = "https://freesound.org/"
 
-private const val DEFAULT_FILTER =
-    "duration:[10 TO 60] samplerate:[8000 TO 48000] bitdepth:16 channels:[1 TO 2]"
+private val DEFAULT_LIST_FILTER = """
+    |duration:[10 TO 60]
+    | samplerate:[8000 TO 48000]
+    | bitdepth:16
+    | channels:[1 TO 2]
+    | license:"Creative Commons 0"
+    """.trimMargin().replace("\n", "")
 
-//private const val DEFAULT_FIELDS = "id,name,type,duration,samplerate,channels"
-private const val DEFAULT_FIELDS = "id,name,type,duration,samplerate,channels,images"
+// Data for list view
+private const val DEFAULT_LIST_FIELDS = "id,name,duration,samplerate,images"
 
 private const val TIMEOUT: Long = 6000
 
@@ -62,16 +67,15 @@ object FreeSoundHttpClient {
         }
     }
 
-    suspend fun get(query: String, page: Int): SoundDbResponse =
+    suspend fun search(query: String, page: Int): FreeSoundResponse =
         instance.get(SERVICE) {
             url {
                 appendPathSegments( "apiv2", "search", "text")
                 parameters.append("token", API_KEY)
                 parameters.append("query", query)
                 parameters.append("page", page.toString())
-                //parameters.append("page_size", "5")
-                parameters.append("filter", DEFAULT_FILTER)
-                parameters.append("fields", DEFAULT_FIELDS)
+                parameters.append("filter", DEFAULT_LIST_FILTER)
+                parameters.append("fields", DEFAULT_LIST_FIELDS)
             }
         }.body()
 }
