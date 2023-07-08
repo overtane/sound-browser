@@ -2,15 +2,15 @@ package com.example.soundbrowser.main
 
 import androidx.recyclerview.widget.RecyclerView
 import com.example.soundbrowser.databinding.FragmentSoundItemBinding
-import com.example.soundbrowser.sounddb.SoundDbResult
 
 class SoundItemViewHolder(private val binding: FragmentSoundItemBinding) :
     RecyclerView.ViewHolder(binding.root) {
 
-    fun bind(sound: SoundDbResult) {
+    fun bind(position: Int, sound: Sound) {
+        val actualPosition = position + 1
         binding.apply {
-            itemNumber.text = sound.id.toString()
-            content.text = sound.name
+            this.sound = sound
+            itemNumber.text = actualPosition.toString()
         }
     }
 }

@@ -13,6 +13,8 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.soundbrowser.databinding.FragmentSoundListBinding
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -36,6 +38,12 @@ class SoundFragment : Fragment() {
 
         binding = FragmentSoundListBinding.inflate(layoutInflater)
         binding.lifecycleOwner = viewLifecycleOwner
+        binding.soundList.addItemDecoration(
+            DividerItemDecoration(
+                context,
+                LinearLayoutManager.VERTICAL
+            )
+        )
         binding.viewModel = viewModel
         binding.soundList.adapter = adapter
 

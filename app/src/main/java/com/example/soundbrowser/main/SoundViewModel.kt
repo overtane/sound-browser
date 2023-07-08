@@ -9,17 +9,19 @@ import androidx.lifecycle.viewModelScope
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.cachedIn
+import androidx.paging.map
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
 class SoundViewModel(
-    private val repository: SoundRepository,
+    repository: SoundRepository,
 ) : ViewModel() {
 
     private val _count = MutableLiveData<Int>()
-    val resultCount: LiveData<String> = _count.map { count -> "$count sounds found"}
+    val resultCount: LiveData<String> = _count.map { count -> "Found $count sounds matching '$query'" }
     private val counts = repository.observeCount()
     var query: String = DEFAULT_QUERY
-    
+
     // The Pager object calls the load() method from the PagingSource object,
     // providing it with the LoadParams object and receiving the LoadResult object in return.
     val flow = Pager(
@@ -27,6 +29,7 @@ class SoundViewModel(
         pagingSourceFactory = { repository.soundPagingSource(query) }
     ).flow
         .cachedIn(viewModelScope)
+        .map { pagingData -> pagingData.map { soundDbResult -> Sound(soundDbResult) } }
         .also { collectCounts() }
 
     private fun collectCounts() = viewModelScope.launch {
@@ -39,7 +42,7 @@ class SoundViewModel(
 }
 
 class SoundViewModelFactory(
-    private val soundRepository: SoundRepository
+    private val soundRepository: SoundRepository,
 ) : ViewModelProvider.Factory {
 
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
