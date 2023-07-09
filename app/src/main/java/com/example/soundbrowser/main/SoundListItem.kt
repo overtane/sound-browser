@@ -1,6 +1,6 @@
 package com.example.soundbrowser.main
 
-import com.example.soundbrowser.freesound.FreeSoundResult
+import com.example.soundbrowser.freesound.FreeSoundSearchResult
 
 data class SoundListItem(
     val id: Int,
@@ -9,7 +9,7 @@ data class SoundListItem(
     val duration: String,
     val imageUrl: String
 ) {
-    constructor(freeSoundItem: FreeSoundResult) : this(
+    constructor(freeSoundItem: FreeSoundSearchResult) : this(
         id = freeSoundItem.id,
         name = freeSoundItem.name,
         samplerate = freeSoundItem.samplerate.toInt().toString(),

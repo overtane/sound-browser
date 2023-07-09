@@ -37,7 +37,7 @@ class SoundFragment : Fragment() {
 
         adapter = SoundPagingDataAdapter(SoundItemClickListener { id ->
             Log.d("SoundItemClickListener", "Clicked item $id")
-            val dialog = SoundDetailsDialog.newInstance("", "")
+            val dialog = SoundDetailsDialog.newInstance(id)
             dialog.show(childFragmentManager, "SoundDetailsDialog")
         })
 

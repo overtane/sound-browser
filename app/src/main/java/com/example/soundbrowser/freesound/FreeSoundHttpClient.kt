@@ -30,16 +30,17 @@ private val DEFAULT_LIST_FILTER = """
     | license:"Creative Commons 0"
     """.trimMargin().replace("\n", "")
 
-// Data for list view
 private const val DEFAULT_LIST_FIELDS = "id,name,duration,samplerate,images"
+private const val DEFAULT_DETAILS_FIELDS =
+    "id,name,duration,samplerate,channels,bitdepth,username,license,previews"
 
 private const val TIMEOUT: Long = 6000
 
 object FreeSoundHttpClient {
     private val instance = HttpClient(CIO) {
 
-        install(ContentNegotiation){
-            json(Json{
+        install(ContentNegotiation) {
+            json(Json {
                 prettyPrint = true
                 isLenient = true
                 ignoreUnknownKeys = true
@@ -67,15 +68,24 @@ object FreeSoundHttpClient {
         }
     }
 
-    suspend fun search(query: String, page: Int): FreeSoundResponse =
+    suspend fun search(query: String, page: Int): FreeSoundSearchResponse =
         instance.get(SERVICE) {
             url {
-                appendPathSegments( "apiv2", "search", "text")
+                appendPathSegments("apiv2", "search", "text")
                 parameters.append("token", API_KEY)
                 parameters.append("query", query)
                 parameters.append("page", page.toString())
                 parameters.append("filter", DEFAULT_LIST_FILTER)
                 parameters.append("fields", DEFAULT_LIST_FIELDS)
+            }
+        }.body()
+
+    suspend fun get(id: Int): FreeSoundDetailsResult =
+        instance.get(SERVICE) {
+            url {
+                appendPathSegments("apiv2", "sounds", id.toString())
+                parameters.append("token", API_KEY)
+                parameters.append("fields", DEFAULT_DETAILS_FIELDS)
             }
         }.body()
 }
