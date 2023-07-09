@@ -80,7 +80,7 @@ object FreeSoundHttpClient {
             }
         }.body()
 
-    suspend fun get(id: Int): FreeSoundDetailsResult =
+    suspend fun getSound(id: Int): FreeSoundDetailsResult =
         instance.get(SERVICE) {
             url {
                 appendPathSegments("apiv2", "sounds", id.toString())

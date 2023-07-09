@@ -5,8 +5,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
+import com.example.soundbrowser.R
 import com.example.soundbrowser.databinding.FragmentSoundDetailsBinding
+import kotlinx.coroutines.launch
 
 class SoundDetailsDialog : DialogFragment() {
 
@@ -32,7 +37,44 @@ class SoundDetailsDialog : DialogFragment() {
             viewModel = myViewModel
             lifecycleOwner = viewLifecycleOwner
         }
+
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                myViewModel.details.collect { details ->
+                    if (details != null) {
+                        binding.detailsDialog.visibility = View.VISIBLE
+                    }
+                }
+            }
+        }
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                myViewModel.state.collect { state ->
+                    if (state != SoundDetailsViewModel.PlayState.LOADING) {
+                        binding.detailsLoadingWheel.visibility = View.GONE
+                    }
+                    binding.detailsPlayButton.isClickable = when (state) {
+                        SoundDetailsViewModel.PlayState.LOADING,
+                        SoundDetailsViewModel.PlayState.COMPLETED -> false
+                        else -> true
+                    }
+                     val id = when (state) {
+                            SoundDetailsViewModel.PlayState.LOADING -> R.string.loading
+                            SoundDetailsViewModel.PlayState.STOPPED,
+                            SoundDetailsViewModel.PlayState.COMPLETED -> R.string.play
+                            SoundDetailsViewModel.PlayState.PLAYING -> R.string.pause
+                    }
+                    binding.detailsPlayButton.text = getString(id)
+                    myViewModel.playByState(state)
+                }
+            }
+        }
         return binding.root
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        myViewModel.onDestroy()
     }
 
     companion object {

@@ -10,7 +10,6 @@ import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.widget.SearchView
 import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -30,10 +29,7 @@ class SoundFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        myViewModel = ViewModelProvider(
-            this,
-            SoundViewModelFactory(SoundRepository())
-        )[SoundViewModel::class.java]
+        myViewModel = SoundViewModel()
 
         adapter = SoundPagingDataAdapter(SoundItemClickListener { id ->
             Log.d("SoundItemClickListener", "Clicked item $id")
@@ -55,13 +51,14 @@ class SoundFragment : Fragment() {
 
             searchView.apply {
                 setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-                    override fun onQueryTextChange(newText: String?): Boolean =  false
+                    override fun onQueryTextChange(newText: String?): Boolean = false
 
                     override fun onQueryTextSubmit(query: String?): Boolean {
                         Log.d("SearchView", "Query text submit: $query")
                         myViewModel.query = query ?: SoundViewModel.DEFAULT_QUERY
                         adapter.refresh()
-                        return false
+                        searchView.clearFocus()
+                        return true
                     }
                 })
                 queryHint = SoundViewModel.DEFAULT_QUERY

@@ -12,7 +12,28 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content" >
+
+    <ProgressBar
+        android:id="@+id/details_loading_wheel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:indeterminate="true"
+        android:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/details_dialog"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
         <Button
             android:id="@+id/details_play_button"
@@ -20,20 +41,10 @@
             android:layout_height="wrap_content"
             android:layout_margin="16dp"
             android:text="Play"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/details_select_button"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/details_table" />
-
-        <Button
-            android:id="@+id/details_select_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="16dp"
-            android:text="Select"
+            android:onClick="@{() -> viewModel.onButtonClick()}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/details_play_button"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/details_table" />
 
         <TableLayout
@@ -76,17 +87,16 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:textStyle="bold"
-                    app:samplerate="@{viewModel.details.samplerate}"/>
+                    android:text="@{viewModel.details.samplerate}"
+                    android:textStyle="bold" />
 
                 <TextView
                     android:id="@+id/details_duration"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
-                    android:layout_weight="1"
-                    android:textStyle="bold"
-                    app:duration="@{viewModel.details.duration}"/>
+                    android:text="@{viewModel.details.duration}"
+                    android:layout_weight="1" />
             </TableRow>
 
             <TableRow
@@ -122,8 +132,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:textStyle="bold"
-                    app:integer="@{viewModel.details.channels}"/>
+                    android:text="@{viewModel.details.channels}"
+                    android:textStyle="bold" />
 
                 <TextView
                     android:id="@+id/details_bitdepth"
@@ -131,8 +141,8 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
                     android:layout_weight="1"
-                    android:textStyle="bold"
-                    app:integer="@{viewModel.details.bitdepth}"/>
+                    android:text="@{viewModel.details.bitdepth}"
+                    android:textStyle="bold" />
             </TableRow>
 
             <TableRow
@@ -192,6 +202,8 @@
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
