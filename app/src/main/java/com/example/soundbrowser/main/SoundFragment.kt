@@ -37,16 +37,13 @@ class SoundFragment : Fragment() {
             val dialog = SoundDetailsDialog.newInstance(id)
             dialog.show(childFragmentManager, "SoundDetailsDialog")
         })
-        adapter.withLoadStateHeaderAndFooter(
-            header = SoundLoadStateAdapter { adapter.retry() },
-            footer = SoundLoadStateAdapter { adapter.retry() }
-        )
 
         binding = FragmentSoundListBinding.inflate(layoutInflater).apply {
             viewModel = myViewModel
             lifecycleOwner = viewLifecycleOwner
 
-            soundList.adapter = adapter
+            soundList.adapter =
+                adapter.withLoadStateFooter(SoundLoadStateAdapter { adapter.retry() })
             soundList.addItemDecoration(
                 DividerItemDecoration(
                     context,
@@ -78,19 +75,19 @@ class SoundFragment : Fragment() {
                     .collectLatest { pagingData -> adapter.submitData(pagingData) }
             }
         }
-
-        viewLifecycleOwner.lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                adapter.loadStateFlow.collectLatest { loadStates ->
-                    when (loadStates.refresh) {
-                        is LoadState.Loading -> Log.d("LOADSTATE", "LOADING")
-                        is LoadState.Error -> Log.d("LOADSTATE", "ERROR")
-                        is LoadState.NotLoading -> Log.d("LOADSTATE", "NOT LOADING")
+        /*
+                viewLifecycleOwner.lifecycleScope.launch {
+                    repeatOnLifecycle(Lifecycle.State.STARTED) {
+                        adapter.loadStateFlow.collectLatest { loadStates ->
+                            when (loadStates.refresh) {
+                                is LoadState.Loading -> Log.d("LOADSTATE", "LOADING")
+                                is LoadState.Error -> Log.d("LOADSTATE", "ERROR")
+                                is LoadState.NotLoading -> Log.d("LOADSTATE", "NOT LOADING")
+                            }
+                        }
                     }
                 }
-            }
-        }
-
+        */
         return binding.root
     }
 

@@ -17,10 +17,10 @@ class SoundDetailsViewModel(id: Int) : ViewModel() {
     private val _details: MutableStateFlow<SoundDetailsUi?> = MutableStateFlow(null)
     val details: StateFlow<SoundDetailsUi?> = _details.asStateFlow()
 
-    enum class PlayState { LOADING, STOPPED, PLAYING, COMPLETED, ERROR }
+    enum class PlaybackState { LOADING, STOPPED, PLAYING, COMPLETED, ERROR }
 
-    private val _state: MutableStateFlow<PlayState> = MutableStateFlow(PlayState.LOADING)
-    val state: StateFlow<PlayState> = _state.asStateFlow()
+    private val _state: MutableStateFlow<PlaybackState> = MutableStateFlow(PlaybackState.LOADING)
+    val state: StateFlow<PlaybackState> = _state.asStateFlow()
 
     private val mediaPlayer = MediaPlayer().apply {
         setAudioAttributes(
@@ -37,36 +37,36 @@ class SoundDetailsViewModel(id: Int) : ViewModel() {
                 .onSuccess { sound ->
                     val uiModel = SoundDetailsUi(sound)
                     mediaPlayer.apply {
-                        setOnPreparedListener { _state.update { PlayState.PLAYING } }
-                        setOnCompletionListener { _state.update { PlayState.COMPLETED } }
+                        setOnPreparedListener { _state.update { PlaybackState.PLAYING } }
+                        setOnCompletionListener { _state.update { PlaybackState.COMPLETED } }
                         setDataSource(uiModel.previewUrl)
                         prepareAsync()
                     }
                     _details.update { uiModel }
                 }
                 .onFailure {
-                    _state.update { PlayState.ERROR }
+                    _state.update { PlaybackState.ERROR }
                 }
         }
     }
 
     fun onButtonClick() = when (state.value) {
-        PlayState.STOPPED -> _state.update { PlayState.PLAYING }
-        PlayState.PLAYING -> _state.update { PlayState.STOPPED }
-        PlayState.ERROR,
-        PlayState.LOADING,
-        PlayState.COMPLETED -> Unit
+        PlaybackState.STOPPED -> _state.update { PlaybackState.PLAYING }
+        PlaybackState.PLAYING -> _state.update { PlaybackState.STOPPED }
+        PlaybackState.ERROR,
+        PlaybackState.LOADING,
+        PlaybackState.COMPLETED -> Unit
     }
 
-    fun playByState(state: PlayState) = when (state) {
-        PlayState.STOPPED -> if (mediaPlayer.isPlaying) mediaPlayer.pause() else Unit
-        PlayState.PLAYING -> if (mediaPlayer.isPlaying) Unit else mediaPlayer.start()
-        PlayState.COMPLETED -> {
+    fun playByState(state: PlaybackState) = when (state) {
+        PlaybackState.STOPPED -> if (mediaPlayer.isPlaying) mediaPlayer.pause() else Unit
+        PlaybackState.PLAYING -> if (mediaPlayer.isPlaying) Unit else mediaPlayer.start()
+        PlaybackState.COMPLETED -> {
             mediaPlayer.seekTo(0)
-            _state.update { PlayState.STOPPED }
+            _state.update { PlaybackState.STOPPED }
         }
-        PlayState.ERROR,
-        PlayState.LOADING -> Unit
+        PlaybackState.ERROR,
+        PlaybackState.LOADING -> Unit
     }
 
     fun onDestroy() {

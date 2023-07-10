@@ -52,21 +52,21 @@ class SoundDetailsDialog : DialogFragment() {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 myViewModel.state.collect { state ->
                     when (state) {
-                        SoundDetailsViewModel.PlayState.ERROR -> closeDialog()
-                        SoundDetailsViewModel.PlayState.LOADING -> Unit
+                        SoundDetailsViewModel.PlaybackState.ERROR -> closeDialog()
+                        SoundDetailsViewModel.PlaybackState.LOADING -> Unit
                         else -> binding.detailsLoadingWheel.visibility = View.GONE
                     }
                     binding.detailsPlayButton.isClickable = when (state) {
-                        SoundDetailsViewModel.PlayState.LOADING,
-                        SoundDetailsViewModel.PlayState.COMPLETED -> false
+                        SoundDetailsViewModel.PlaybackState.LOADING,
+                        SoundDetailsViewModel.PlaybackState.COMPLETED -> false
                         else -> true
                     }
                      val id = when (state) {
-                            SoundDetailsViewModel.PlayState.ERROR,
-                            SoundDetailsViewModel.PlayState.LOADING -> R.string.loading
-                            SoundDetailsViewModel.PlayState.STOPPED,
-                            SoundDetailsViewModel.PlayState.COMPLETED -> R.string.play
-                            SoundDetailsViewModel.PlayState.PLAYING -> R.string.pause
+                            SoundDetailsViewModel.PlaybackState.ERROR,
+                            SoundDetailsViewModel.PlaybackState.LOADING -> R.string.loading
+                            SoundDetailsViewModel.PlaybackState.STOPPED,
+                            SoundDetailsViewModel.PlaybackState.COMPLETED -> R.string.play
+                            SoundDetailsViewModel.PlaybackState.PLAYING -> R.string.pause
                     }
                     binding.detailsPlayButton.text = getString(id)
                     myViewModel.playByState(state)

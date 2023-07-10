@@ -11,14 +11,11 @@ class SoundLoadStateAdapter(
     private val retryCb: () -> Unit
 ) : LoadStateAdapter<SoundLoadStateViewHolder>() {
 
-    override fun onCreateViewHolder(
-        parent: ViewGroup,
-        loadState: LoadState
-    ) = SoundLoadStateViewHolder(
-        FragmentSoundLoadStateBinding.bind(
-            LayoutInflater.from(parent.context).inflate(
-                R.layout.fragment_sound_load_state, parent, false)
-        ), retryCb
+    override fun onCreateViewHolder(parent: ViewGroup, loadState: LoadState) =
+        SoundLoadStateViewHolder(
+            FragmentSoundLoadStateBinding.inflate(
+                LayoutInflater.from(parent.context), parent, false
+            ), retryCb
     )
 
     override fun onBindViewHolder(

@@ -1,5 +1,6 @@
 package com.example.soundbrowser.main
 
+import android.util.Log
 import androidx.core.view.isVisible
 import androidx.paging.LoadState
 import androidx.recyclerview.widget.RecyclerView
@@ -11,10 +12,12 @@ class SoundLoadStateViewHolder(
 ) : RecyclerView.ViewHolder(binding.root) {
 
     init {
+        Log.d("LOADSTATE", "CREATE")
         binding.loadStateRetry.setOnClickListener { retryCb() }
     }
 
     fun bind(loadState: LoadState) {
+        Log.d("LOADSTATE", "BIND")
         binding.apply {
             loadStateProgress.isVisible = loadState is LoadState.Loading
             loadStateRetry.isVisible = loadState is LoadState.Error
