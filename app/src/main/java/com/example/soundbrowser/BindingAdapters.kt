@@ -6,8 +6,10 @@ import com.squareup.picasso.Picasso
 
 @BindingAdapter("imageUrl")
 fun bindImage(view: ImageView, url: String) {
-    Picasso.get()
-        .load(url)
-        .error(R.drawable.user_placeholder_error)
-        .into(view)
+    if (url.isNotEmpty()) {
+        Picasso.get()
+            .load(url)
+            .error(R.drawable.user_placeholder_error)
+            .into(view)
+    }
 }

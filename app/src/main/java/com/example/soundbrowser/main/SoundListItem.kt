@@ -12,8 +12,16 @@ data class SoundListItem(
     constructor(freeSoundItem: FreeSoundSearchResult) : this(
         id = freeSoundItem.id,
         name = freeSoundItem.name,
-        samplerate = freeSoundItem.samplerate.toInt().toString(),
-        duration = freeSoundItem.duration.toInt().toString(),
+        samplerate = freeSoundItem.samplerate.toInt().toString() + " Hz, ",
+        duration = freeSoundItem.duration.toInt().toString() + " s",
         imageUrl = freeSoundItem.images.waveform_m
+    )
+
+    constructor() : this(
+        id = 0,
+        name = "",
+        samplerate = "",
+        duration = "",
+        imageUrl = ""
     )
 }

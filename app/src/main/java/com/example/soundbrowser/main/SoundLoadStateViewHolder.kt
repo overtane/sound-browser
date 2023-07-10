@@ -12,18 +12,18 @@ class SoundLoadStateViewHolder(
 ) : RecyclerView.ViewHolder(binding.root) {
 
     init {
-        Log.d("LOADSTATE", "CREATE")
+        Log.d("LOADSTATE", "CREATE VIEWHOLDER")
         binding.loadStateRetry.setOnClickListener { retryCb() }
     }
 
     fun bind(loadState: LoadState) {
-        Log.d("LOADSTATE", "BIND")
+        Log.d("LOADSTATE", "BIND VIEWHOLDER")
         binding.apply {
             loadStateProgress.isVisible = loadState is LoadState.Loading
             loadStateRetry.isVisible = loadState is LoadState.Error
             loadStateError.isVisible = loadState is LoadState.Error
             if (loadState is LoadState.Error) {
-                loadStateError.text = loadState.error.message
+                loadStateError.text = "ERROR PERKELE"
             }
         }
     }

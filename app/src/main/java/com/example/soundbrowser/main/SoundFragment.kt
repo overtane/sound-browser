@@ -38,12 +38,25 @@ class SoundFragment : Fragment() {
             dialog.show(childFragmentManager, "SoundDetailsDialog")
         })
 
+        adapter.apply {
+            addLoadStateListener { loadState ->
+                if (itemCount == 0) {
+                    when (loadState.refresh) {
+                        is LoadState.Error -> Log.d("LOADSTATE", "NO NETWORK")
+                        is LoadState.Loading -> Log.d("LOADSTATE", "LOADING")
+                        is LoadState.NotLoading -> Log.d("LOADSTATE", "LOADED")
+                    }
+                }
+            }
+        }
+
         binding = FragmentSoundListBinding.inflate(layoutInflater).apply {
-            viewModel = myViewModel
             lifecycleOwner = viewLifecycleOwner
+            viewModel = myViewModel
 
             soundList.adapter =
                 adapter.withLoadStateFooter(SoundLoadStateAdapter { adapter.retry() })
+
             soundList.addItemDecoration(
                 DividerItemDecoration(
                     context,
@@ -72,24 +85,15 @@ class SoundFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 myViewModel.pageFlow
-                    .collectLatest { pagingData -> adapter.submitData(pagingData) }
+                    .collectLatest { pagingData ->
+                        Log.d("LOADSTATE", "SUBMIT")
+                        adapter.submitData(pagingData)
+                    }
             }
         }
-        /*
-                viewLifecycleOwner.lifecycleScope.launch {
-                    repeatOnLifecycle(Lifecycle.State.STARTED) {
-                        adapter.loadStateFlow.collectLatest { loadStates ->
-                            when (loadStates.refresh) {
-                                is LoadState.Loading -> Log.d("LOADSTATE", "LOADING")
-                                is LoadState.Error -> Log.d("LOADSTATE", "ERROR")
-                                is LoadState.NotLoading -> Log.d("LOADSTATE", "NOT LOADING")
-                            }
-                        }
-                    }
-                }
-        */
         return binding.root
     }
+
 
 }
 
