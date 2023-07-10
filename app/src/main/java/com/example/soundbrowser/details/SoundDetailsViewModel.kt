@@ -7,7 +7,6 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.example.soundbrowser.main.SoundRepository
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -15,12 +14,12 @@ import kotlinx.coroutines.launch
 class SoundDetailsViewModel(id: Int) : ViewModel() {
 
     private val _details: MutableStateFlow<SoundDetailsUi?> = MutableStateFlow(null)
-    val details: StateFlow<SoundDetailsUi?> = _details.asStateFlow()
+    val details = _details.asStateFlow()
 
     enum class PlaybackState { LOADING, STOPPED, PLAYING, COMPLETED, ERROR }
 
     private val _state: MutableStateFlow<PlaybackState> = MutableStateFlow(PlaybackState.LOADING)
-    val state: StateFlow<PlaybackState> = _state.asStateFlow()
+    val state = _state.asStateFlow()
 
     private val mediaPlayer = MediaPlayer().apply {
         setAudioAttributes(
@@ -65,6 +64,7 @@ class SoundDetailsViewModel(id: Int) : ViewModel() {
             mediaPlayer.seekTo(0)
             _state.update { PlaybackState.STOPPED }
         }
+
         PlaybackState.ERROR,
         PlaybackState.LOADING -> Unit
     }
