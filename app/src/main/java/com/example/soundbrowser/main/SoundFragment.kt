@@ -12,6 +12,7 @@ import android.widget.SearchView
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.paging.LoadState
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.soundbrowser.databinding.FragmentSoundListBinding
@@ -36,6 +37,10 @@ class SoundFragment : Fragment() {
             val dialog = SoundDetailsDialog.newInstance(id)
             dialog.show(childFragmentManager, "SoundDetailsDialog")
         })
+        adapter.withLoadStateHeaderAndFooter(
+            header = SoundLoadStateAdapter { adapter.retry() },
+            footer = SoundLoadStateAdapter { adapter.retry() }
+        )
 
         binding = FragmentSoundListBinding.inflate(layoutInflater).apply {
             viewModel = myViewModel
@@ -69,8 +74,20 @@ class SoundFragment : Fragment() {
 
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                myViewModel.flow
+                myViewModel.pageFlow
                     .collectLatest { pagingData -> adapter.submitData(pagingData) }
+            }
+        }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                adapter.loadStateFlow.collectLatest { loadStates ->
+                    when (loadStates.refresh) {
+                        is LoadState.Loading -> Log.d("LOADSTATE", "LOADING")
+                        is LoadState.Error -> Log.d("LOADSTATE", "ERROR")
+                        is LoadState.NotLoading -> Log.d("LOADSTATE", "NOT LOADING")
+                    }
+                }
             }
         }
 

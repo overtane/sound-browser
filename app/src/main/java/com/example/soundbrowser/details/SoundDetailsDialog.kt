@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
@@ -50,8 +51,10 @@ class SoundDetailsDialog : DialogFragment() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 myViewModel.state.collect { state ->
-                    if (state != SoundDetailsViewModel.PlayState.LOADING) {
-                        binding.detailsLoadingWheel.visibility = View.GONE
+                    when (state) {
+                        SoundDetailsViewModel.PlayState.ERROR -> closeDialog()
+                        SoundDetailsViewModel.PlayState.LOADING -> Unit
+                        else -> binding.detailsLoadingWheel.visibility = View.GONE
                     }
                     binding.detailsPlayButton.isClickable = when (state) {
                         SoundDetailsViewModel.PlayState.LOADING,
@@ -59,6 +62,7 @@ class SoundDetailsDialog : DialogFragment() {
                         else -> true
                     }
                      val id = when (state) {
+                            SoundDetailsViewModel.PlayState.ERROR,
                             SoundDetailsViewModel.PlayState.LOADING -> R.string.loading
                             SoundDetailsViewModel.PlayState.STOPPED,
                             SoundDetailsViewModel.PlayState.COMPLETED -> R.string.play
@@ -77,7 +81,15 @@ class SoundDetailsDialog : DialogFragment() {
         myViewModel.onDestroy()
     }
 
+    private fun closeDialog() {
+        val duration = Toast.LENGTH_SHORT
+        Toast.makeText(context, LOAD_ERROR, duration).show()
+        dismiss()
+    }
+
     companion object {
+        private const val LOAD_ERROR = "Cannot load the sound"
+
         private const val ARG_ID = "id"
 
         @JvmStatic

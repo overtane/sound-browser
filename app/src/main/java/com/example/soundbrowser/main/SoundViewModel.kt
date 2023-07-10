@@ -26,7 +26,7 @@ class SoundViewModel : ViewModel() {
 
     // The Pager object calls the load() method from the PagingSource object,
     // providing it with the LoadParams object and receiving the LoadResult object in return.
-    val flow = Pager(
+    val pageFlow = Pager(
         config = PagingConfig(pageSize = 15),
         pagingSourceFactory = { SoundRepository.soundPagingSource(query) }
     ).flow
