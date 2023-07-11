@@ -4,6 +4,7 @@ import android.media.AudioAttributes
 import android.media.MediaPlayer
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import org.github.overtane.soundbrowser.main.SoundRepository
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -14,7 +15,7 @@ import kotlinx.coroutines.launch
 class SoundDetailsViewModel(id: Int) : ViewModel() {
 
     private val _details: MutableStateFlow<SoundDetailsUi?> = MutableStateFlow(null)
-    val details = _details.asStateFlow()
+    val details = _details.asLiveData()
 
     enum class PlaybackState { LOADING, STOPPED, PLAYING, COMPLETED, ERROR }
 
@@ -49,9 +50,10 @@ class SoundDetailsViewModel(id: Int) : ViewModel() {
         }
     }
 
-    fun onButtonClick() = when (state.value) {
+    fun onPlayButtonClick() = when (state.value) {
         PlaybackState.STOPPED -> _state.update { PlaybackState.PLAYING }
         PlaybackState.PLAYING -> _state.update { PlaybackState.STOPPED }
+
         PlaybackState.ERROR,
         PlaybackState.LOADING,
         PlaybackState.COMPLETED -> Unit

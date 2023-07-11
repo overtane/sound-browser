@@ -10,6 +10,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import kotlinx.coroutines.flow.collectLatest
 import org.github.overtane.soundbrowser.R
 import org.github.overtane.soundbrowser.databinding.FragmentSoundDetailsBinding
 import kotlinx.coroutines.launch
@@ -37,36 +38,39 @@ class SoundDetailsDialog : DialogFragment() {
         binding = FragmentSoundDetailsBinding.inflate(layoutInflater).apply {
             viewModel = myViewModel
             lifecycleOwner = viewLifecycleOwner
+
+            detailsClose.setOnClickListener { dismiss() }
+        }
+
+
+        myViewModel.details.observe(this) {
+            if (it != null) {
+                binding.detailsDialog.visibility = View.VISIBLE
+            }
         }
 
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                myViewModel.details.collect { details ->
-                    if (details != null) {
-                        binding.detailsDialog.visibility = View.VISIBLE
-                    }
-                }
-            }
-        }
-        lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                myViewModel.state.collect { state ->
+                myViewModel.state.collectLatest { state ->
                     when (state) {
-                        SoundDetailsViewModel.PlaybackState.ERROR -> closeDialog()
+                        SoundDetailsViewModel.PlaybackState.ERROR -> dismissWithError()
                         SoundDetailsViewModel.PlaybackState.LOADING -> Unit
                         else -> binding.detailsLoadingWheel.visibility = View.GONE
                     }
                     binding.detailsPlayButton.isClickable = when (state) {
                         SoundDetailsViewModel.PlaybackState.LOADING,
                         SoundDetailsViewModel.PlaybackState.COMPLETED -> false
+
                         else -> true
                     }
-                     val id = when (state) {
-                            SoundDetailsViewModel.PlaybackState.ERROR,
-                            SoundDetailsViewModel.PlaybackState.LOADING -> R.string.loading
-                            SoundDetailsViewModel.PlaybackState.STOPPED,
-                            SoundDetailsViewModel.PlaybackState.COMPLETED -> R.string.play
-                            SoundDetailsViewModel.PlaybackState.PLAYING -> R.string.pause
+                    val id = when (state) {
+                        SoundDetailsViewModel.PlaybackState.ERROR,
+                        SoundDetailsViewModel.PlaybackState.LOADING -> R.string.loading
+
+                        SoundDetailsViewModel.PlaybackState.STOPPED,
+                        SoundDetailsViewModel.PlaybackState.COMPLETED -> R.string.play
+
+                        SoundDetailsViewModel.PlaybackState.PLAYING -> R.string.pause
                     }
                     binding.detailsPlayButton.text = getString(id)
                     myViewModel.playByState(state)
@@ -81,7 +85,7 @@ class SoundDetailsDialog : DialogFragment() {
         myViewModel.onDestroy()
     }
 
-    private fun closeDialog() {
+    private fun dismissWithError() {
         val duration = Toast.LENGTH_SHORT
         Toast.makeText(context, LOAD_ERROR, duration).show()
         dismiss()
