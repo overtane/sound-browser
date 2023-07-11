@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.example.soundbrowser.MainActivity">
     <item
-        android:id="@+id/about_fragment"
+        android:id="@+id/aboutFragment"
         android:orderInCategory="100"
         android:title="@string/about"
         app:showAsAction="never" />

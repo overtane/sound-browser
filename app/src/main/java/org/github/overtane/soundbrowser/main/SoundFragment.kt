@@ -4,14 +4,21 @@ import android.os.Bundle
 import android.text.InputType
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.widget.SearchView
+import androidx.core.view.MenuHost
+import androidx.core.view.MenuProvider
 import androidx.core.view.isVisible
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.fragment.findNavController
+import androidx.navigation.ui.NavigationUI
 import androidx.paging.LoadState
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -20,8 +27,9 @@ import org.github.overtane.soundbrowser.details.SoundDetailsDialog
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import org.github.overtane.soundbrowser.R
 
-class SoundFragment : Fragment() {
+class SoundFragment : Fragment(), MenuProvider {
 
     private lateinit var myViewModel: SoundViewModel
     private lateinit var binding: FragmentSoundListBinding
@@ -34,6 +42,7 @@ class SoundFragment : Fragment() {
         myViewModel = SoundViewModel()
         adapter = setupPagingDataAdapter()
         binding = setupViewBinding()
+        setupMenu()
 
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -41,6 +50,7 @@ class SoundFragment : Fragment() {
                     .collectLatest { pagingData -> adapter.submitData(pagingData) }
             }
         }
+
         return binding.root
     }
 
@@ -90,5 +100,17 @@ class SoundFragment : Fragment() {
                 inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_NORMAL
             }
         }
+
+    private fun setupMenu() = (requireActivity() as MenuHost).addMenuProvider(
+        this,
+        viewLifecycleOwner,
+        Lifecycle.State.RESUMED
+    )
+
+    override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) =
+        menuInflater.inflate(R.menu.menu_main, menu)
+
+    override fun onMenuItemSelected(item: MenuItem) =
+        NavigationUI.onNavDestinationSelected(item, findNavController())
 }
 
