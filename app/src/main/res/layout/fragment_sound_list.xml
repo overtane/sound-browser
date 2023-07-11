@@ -8,7 +8,7 @@
 
         <variable
             name="viewModel"
-            type="com.example.soundbrowser.main.SoundViewModel" />
+            type="org.github.overtane.soundbrowser.main.SoundViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

@@ -6,10 +6,10 @@
     <data>
         <variable
             name="sound"
-            type="com.example.soundbrowser.main.SoundListItem"/>
+            type="org.github.overtane.soundbrowser.main.SoundListItem"/>
         <variable
             name="clickListener"
-            type="com.example.soundbrowser.main.SoundItemClickListener"/>
+            type="org.github.overtane.soundbrowser.main.SoundItemClickListener"/>
     </data>
 
 

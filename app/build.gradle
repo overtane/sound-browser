@@ -6,11 +6,11 @@ plugins {
 }
 
 android {
-    namespace 'com.example.soundbrowser'
+    namespace 'org.github.overtane.soundbrowser'
     compileSdk 33
 
     defaultConfig {
-        applicationId "com.example.soundbrowser"
+        applicationId "org.github.overtane.soundbrowser"
         minSdk 30
         targetSdk 33
         versionCode 1
