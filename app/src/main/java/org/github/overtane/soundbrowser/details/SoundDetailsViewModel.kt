@@ -50,7 +50,7 @@ class SoundDetailsViewModel(id: Int) : ViewModel() {
         }
     }
 
-    fun onPlayButtonClick() = when (state.value) {
+    fun onPlayButtonClicked() = when (state.value) {
         PlaybackState.STOPPED -> _state.update { PlaybackState.PLAYING }
         PlaybackState.PLAYING -> _state.update { PlaybackState.STOPPED }
 
@@ -71,6 +71,9 @@ class SoundDetailsViewModel(id: Int) : ViewModel() {
         PlaybackState.LOADING -> Unit
     }
 
+    fun onUseSoundButtonClicked() {
+
+    }
     fun onDestroy() {
         mediaPlayer.release()
     }

@@ -226,18 +226,19 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_margin="16dp"
-                android:onClick="@{() -> viewModel.onPlayButtonClick()}"
+                android:onClick="@{() -> viewModel.onPlayButtonClicked()}"
                 android:text="Loading"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/details_table" />
 
             <Button
-                android:id="@+id/details_use_button"
+                android:id="@+id/details_use_sound_button"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_margin="16dp"
                 android:text="Use Sound"
+                android:onClick="@{() -> viewModel.onUseSoundButtonClicked()}"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/details_play_button"
