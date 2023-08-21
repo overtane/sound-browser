@@ -14,6 +14,7 @@ import kotlinx.coroutines.flow.collectLatest
 import org.github.overtane.soundbrowser.R
 import org.github.overtane.soundbrowser.databinding.FragmentSoundDetailsBinding
 import kotlinx.coroutines.launch
+import org.github.overtane.soundbrowser.MainActivity
 
 class SoundDetailsDialog : DialogFragment() {
 
@@ -40,8 +41,15 @@ class SoundDetailsDialog : DialogFragment() {
             lifecycleOwner = viewLifecycleOwner
 
             detailsClose.setOnClickListener { dismiss() }
-        }
 
+            detailsUseSoundButton.setOnClickListener {
+                activity?.supportFragmentManager?.setFragmentResult(
+                    MainActivity.SELECTED_SOUND_KEY,
+                    myViewModel.fragmentResult()
+                )
+                dismiss()
+            }
+        }
 
         myViewModel.details.observe(this) {
             if (it != null) {
@@ -80,9 +88,9 @@ class SoundDetailsDialog : DialogFragment() {
         return binding.root
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        myViewModel.onDestroy()
+    override fun onDestroyView() {
+        super.onDestroyView()
+        myViewModel.onDestroyView()
     }
 
     private fun dismissWithError() {
@@ -92,8 +100,7 @@ class SoundDetailsDialog : DialogFragment() {
     }
 
     companion object {
-        private const val LOAD_ERROR = "Cannot load the sound"
-
+        private const val LOAD_ERROR = "Cannot load sound"
         private const val ARG_ID = "id"
 
         @JvmStatic

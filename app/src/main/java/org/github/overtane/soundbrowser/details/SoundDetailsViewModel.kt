@@ -2,6 +2,7 @@ package org.github.overtane.soundbrowser.details
 
 import android.media.AudioAttributes
 import android.media.MediaPlayer
+import android.os.Bundle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.asLiveData
@@ -12,7 +13,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-class SoundDetailsViewModel(id: Int) : ViewModel() {
+class SoundDetailsViewModel(val id: Int) : ViewModel() {
 
     private val _details: MutableStateFlow<SoundDetailsUi?> = MutableStateFlow(null)
     val details = _details.asLiveData()
@@ -31,25 +32,6 @@ class SoundDetailsViewModel(id: Int) : ViewModel() {
         )
     }
 
-    init {
-        viewModelScope.launch {
-            SoundRepository.getSound(id)
-                .onSuccess { sound ->
-                    val uiModel = SoundDetailsUi(sound)
-                    mediaPlayer.apply {
-                        setOnPreparedListener { _state.update { PlaybackState.PLAYING } }
-                        setOnCompletionListener { _state.update { PlaybackState.COMPLETED } }
-                        setDataSource(uiModel.previewUrl)
-                        prepareAsync()
-                    }
-                    _details.update { uiModel }
-                }
-                .onFailure {
-                    _state.update { PlaybackState.ERROR }
-                }
-        }
-    }
-
     fun onPlayButtonClicked() = when (state.value) {
         PlaybackState.STOPPED -> _state.update { PlaybackState.PLAYING }
         PlaybackState.PLAYING -> _state.update { PlaybackState.STOPPED }
@@ -59,23 +41,50 @@ class SoundDetailsViewModel(id: Int) : ViewModel() {
         PlaybackState.COMPLETED -> Unit
     }
 
-    fun playByState(state: PlaybackState) = when (state) {
+    suspend fun playByState(state: PlaybackState) = when (state) {
+        PlaybackState.LOADING -> loadMedia(id)
         PlaybackState.STOPPED -> if (mediaPlayer.isPlaying) mediaPlayer.pause() else Unit
         PlaybackState.PLAYING -> if (mediaPlayer.isPlaying) Unit else mediaPlayer.start()
         PlaybackState.COMPLETED -> {
             mediaPlayer.seekTo(0)
             _state.update { PlaybackState.STOPPED }
         }
-
-        PlaybackState.ERROR,
-        PlaybackState.LOADING -> Unit
+        PlaybackState.ERROR -> Unit
     }
 
     fun onUseSoundButtonClicked() {
-
+        /* use setFragmentResult to bundle up fragment result */
     }
-    fun onDestroy() {
-        mediaPlayer.release()
+
+    fun onDestroyView() {
+        mediaPlayer.reset()
+        _state.update { PlaybackState.LOADING }
+    }
+
+    fun fragmentResult() = Bundle().apply {
+        _details.value?.let {
+            this.putInt("SOUND_ID", it.id)
+            this.putString("SOUND_NAME", it.name)
+        }
+    }
+
+    private suspend fun loadMedia(id: Int) {
+        viewModelScope.launch {
+            SoundRepository.getSound(id)
+                .onSuccess { sound ->
+                    val uiModel = SoundDetailsUi(sound)
+                    mediaPlayer.apply {
+                        setDataSource(uiModel.previewUrl)
+                        setOnPreparedListener { _state.update { PlaybackState.PLAYING } }
+                        setOnCompletionListener { _state.update { PlaybackState.COMPLETED } }
+                        prepareAsync()
+                    }
+                    _details.update { uiModel }
+                }
+                .onFailure {
+                    _state.update { PlaybackState.ERROR }
+                }
+        }
     }
 }
 

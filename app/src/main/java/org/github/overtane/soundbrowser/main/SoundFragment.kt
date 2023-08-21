@@ -2,6 +2,7 @@ package org.github.overtane.soundbrowser.main
 
 import android.os.Bundle
 import android.text.InputType
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.Menu
@@ -14,6 +15,8 @@ import android.widget.SearchView
 import androidx.core.view.MenuHost
 import androidx.core.view.MenuProvider
 import androidx.core.view.isVisible
+import androidx.fragment.app.setFragmentResult
+import androidx.fragment.app.setFragmentResultListener
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -27,6 +30,7 @@ import org.github.overtane.soundbrowser.details.SoundDetailsDialog
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import org.github.overtane.soundbrowser.MainActivity
 import org.github.overtane.soundbrowser.R
 
 class SoundFragment : Fragment(), MenuProvider {
