@@ -32,7 +32,7 @@ private val DEFAULT_LIST_FILTER = """
 
 private const val DEFAULT_LIST_FIELDS = "id,name,duration,samplerate,images"
 private const val DEFAULT_DETAILS_FIELDS =
-    "id,name,duration,samplerate,channels,bitdepth,username,license,previews"
+    "id,name,url,duration,samplerate,channels,bitdepth,username,license,previews"
 
 private const val TIMEOUT: Long = 6000
 

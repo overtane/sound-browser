@@ -7,6 +7,7 @@ import kotlinx.serialization.Serializable
 data class FreeSoundDetailsResult(
     val id: Int,
     val name: String,
+    val url: String,
     val duration: Double,
     val samplerate: Double,
     val channels: Int,

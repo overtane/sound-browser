@@ -15,10 +15,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var navController: NavController
 
     private var _pendingIntent: PendingIntent? = null
-    val pendingIntent
+    private val pendingIntent
         get() = _pendingIntent
-    val hasPendingIntent: Boolean
-        get() = _pendingIntent != null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -27,21 +25,22 @@ class MainActivity : AppCompatActivity() {
         val appBarConfiguration = AppBarConfiguration(navController.graph)
         setupActionBarWithNavController(navController, appBarConfiguration)
 
-        // Get selected sound in fragment result and pass it to origin of pending intent
-        supportFragmentManager.setFragmentResultListener(SELECTED_SOUND_KEY, this) { _, bundle ->
-            Log.d("MainActivity", "Got fragment result")
+        // Get selected sound in fragment result and pass it to pending intent component
+        supportFragmentManager.setFragmentResultListener(SOUND_REPLY_KEY, this) { _, bundle ->
+            val intent = Intent().apply {
+                putExtra(SOUND_REPLY_KEY, bundle)
+            }
+            Log.d(TAG, "Sending sound details in pending intent")
+            pendingIntent?.send(applicationContext, SOUND_REQUEST_CODE, intent)
+            _pendingIntent = null
         }
     }
 
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
-        Log.d("SoundBrowser", "onNewIntent")
         intent?.extras?.let {
-            Log.d("SoundBrowser", "Intent has extras")
-            Log.d("SoundBrowser", "Extras == $it)")
-            val pi: PendingIntent? = it.getParcelable("PendingIntent")
-            _pendingIntent = pi
-            Log.d("SoundBrowser", "PendingIntent == $hasPendingIntent")
+            _pendingIntent = it.getParcelable(SOUND_REQUEST_KEY)
+            Log.d(TAG, "Got intent request")
         }
     }
 
@@ -50,7 +49,11 @@ class MainActivity : AppCompatActivity() {
     }
 
     companion object {
-        const val SELECTED_SOUND_KEY = "SelectedSound"
+        const val TAG = "SoundBrowser"
+        private const val SOUND_REQUEST_CODE = 0x42
+        const val PACKAGE_NAME = BuildConfig.APPLICATION_ID
+        const val SOUND_REQUEST_KEY = "$PACKAGE_NAME.SOUND_REQUEST"
+        const val SOUND_REPLY_KEY = "$PACKAGE_NAME.SOUND_REPLY"
     }
 
 }

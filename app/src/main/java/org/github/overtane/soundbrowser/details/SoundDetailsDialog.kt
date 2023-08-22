@@ -44,7 +44,7 @@ class SoundDetailsDialog : DialogFragment() {
 
             detailsUseSoundButton.setOnClickListener {
                 activity?.supportFragmentManager?.setFragmentResult(
-                    MainActivity.SELECTED_SOUND_KEY,
+                    MainActivity.SOUND_REPLY_KEY,
                     myViewModel.fragmentResult()
                 )
                 dismiss()

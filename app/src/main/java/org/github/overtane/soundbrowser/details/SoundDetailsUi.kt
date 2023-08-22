@@ -5,6 +5,7 @@ import org.github.overtane.soundbrowser.freesound.FreeSoundDetailsResult
 data class SoundDetailsUi(
     val id: Int,
     val name: String,
+    val url: String,
     val duration: String,
     val samplerate: String,
     val channels: String,
@@ -15,6 +16,7 @@ data class SoundDetailsUi(
     constructor(freeSoundResult: FreeSoundDetailsResult) : this(
         id = freeSoundResult.id,
         name = freeSoundResult.name,
+        url = freeSoundResult.url,
         duration = freeSoundResult.duration.toInt().toString() + " s",
         samplerate = freeSoundResult.samplerate.toInt().toString() + " Hz",
         channels = freeSoundResult.channels.toString(),

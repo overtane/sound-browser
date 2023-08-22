@@ -12,6 +12,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import org.github.overtane.soundbrowser.MainActivity
 
 class SoundDetailsViewModel(val id: Int) : ViewModel() {
 
@@ -63,8 +64,11 @@ class SoundDetailsViewModel(val id: Int) : ViewModel() {
 
     fun fragmentResult() = Bundle().apply {
         _details.value?.let {
-            this.putInt("SOUND_ID", it.id)
-            this.putString("SOUND_NAME", it.name)
+            this.putString(EXTRA_NAME, it.name)
+            this.putString(EXTRA_URL, it.url)
+            this.putInt(EXTRA_DURATION, it.duration.toInt())
+            this.putInt(EXTRA_CHANNELS, it.channels.toInt())
+            this.putInt(EXTRA_SAMPLE_RATE, it.samplerate.toInt())
         }
     }
 
@@ -85,6 +89,14 @@ class SoundDetailsViewModel(val id: Int) : ViewModel() {
                     _state.update { PlaybackState.ERROR }
                 }
         }
+    }
+
+    companion object {
+        private const val EXTRA_NAME = "${MainActivity.PACKAGE_NAME}.NAME"
+        private const val EXTRA_URL = "${MainActivity.PACKAGE_NAME}.URL"
+        private const val EXTRA_DURATION = "${MainActivity.PACKAGE_NAME}.DURATION"
+        private const val EXTRA_CHANNELS = "${MainActivity.PACKAGE_NAME}.CHANNELS"
+        private const val EXTRA_SAMPLE_RATE = "${MainActivity.PACKAGE_NAME}.SAMPLE_RATE"
     }
 }
 
