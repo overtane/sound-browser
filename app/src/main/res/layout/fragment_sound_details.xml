@@ -21,7 +21,8 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_margin="16dp"
-            android:text="Sound Details"
+            android:singleLine="true"
+            android:text="@string/sound_details"
             android:textSize="18sp"
             app:layout_constraintBottom_toTopOf="@+id/details_dialog"
             app:layout_constraintEnd_toStartOf="@+id/details_close"
@@ -38,7 +39,8 @@
             app:layout_constraintBottom_toTopOf="@+id/details_dialog"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/details_title"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            android:contentDescription="@string/close_dialog" />
 
 
         <ProgressBar
@@ -68,13 +70,15 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:layout_marginEnd="16dp"
+                android:linksClickable="true"
                 android:maxLines="2"
-                android:text="@{viewModel.details.name}"
+                android:singleLine="true"
                 android:textStyle="bold"
                 app:layout_constraintBottom_toTopOf="@+id/details_table"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                app:soundLink="@{viewModel.details}"/>
 
             <TableLayout
                 android:id="@+id/details_table"
@@ -96,7 +100,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:layout_gravity="start"
-                        android:text="Sample rate" />
+                        android:text="@string/sample_rate" />
 
                     <TextView
                         android:layout_width="match_parent"
@@ -104,7 +108,7 @@
                         android:layout_weight="1"
                         android:layout_marginStart="8dp"
                         android:layout_marginEnd="16dp"
-                        android:text="Duration" />
+                        android:text="@string/duration" />
                 </TableRow>
 
                 <TableRow
@@ -116,7 +120,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="@{viewModel.details.samplerate}"
+                        android:text="@{viewModel.details.samplerate + ` Hz`}"
                         android:textStyle="bold" />
 
                     <TextView
@@ -126,7 +130,7 @@
                         android:layout_weight="1"
                         android:layout_marginStart="8dp"
                         android:layout_marginEnd="16dp"
-                        android:text="@{viewModel.details.duration}"
+                        android:text="@{viewModel.details.duration + ` s`}"
                         android:textStyle="bold" />
 
                 </TableRow>
@@ -140,7 +144,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="Channels" />
+                        android:text="@string/channels" />
 
                     <TextView
                         android:layout_width="match_parent"
@@ -148,7 +152,7 @@
                         android:layout_weight="1"
                         android:layout_marginStart="8dp"
                         android:layout_marginEnd="16dp"
-                        android:text="Bit depth" />
+                        android:text="@string/bit_depth" />
                 </TableRow>
 
 
@@ -184,7 +188,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="License" />
+                        android:text="@string/license" />
 
                     <TextView
                         android:layout_width="match_parent"
@@ -192,7 +196,7 @@
                         android:layout_weight="1"
                         android:layout_marginStart="8dp"
                         android:layout_marginEnd="16dp"
-                        android:text="Uploader" />
+                        android:text="@string/uploader" />
                 </TableRow>
 
 
@@ -205,7 +209,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="Creative Commons 0"
+                        android:singleLine="true"
+                        android:text="@string/creative_commons_0"
                         android:textStyle="bold" />
 
                     <TextView
@@ -215,6 +220,7 @@
                         android:layout_weight="1"
                         android:layout_marginStart="8dp"
                         android:layout_marginEnd="16dp"
+                        android:singleLine="true"
                         android:text="@{viewModel.details.username}"
                         android:textStyle="bold" />
                 </TableRow>
@@ -227,7 +233,7 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="16dp"
                 android:onClick="@{() -> viewModel.onPlayButtonClicked()}"
-                android:text="Loading"
+                android:text="@string/loading"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/details_table" />
@@ -237,7 +243,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_margin="16dp"
-                android:text="Use Sound"
+                android:text="@string/use_sound"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/details_play_button"

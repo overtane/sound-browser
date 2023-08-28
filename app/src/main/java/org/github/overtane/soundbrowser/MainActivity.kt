@@ -40,7 +40,7 @@ class MainActivity : AppCompatActivity() {
         super.onNewIntent(intent)
         intent?.extras?.let {
             _pendingIntent = it.getParcelable(SOUND_REQUEST_KEY)
-            Log.d(TAG, "Got intent request")
+            Log.d(TAG, "Got new intent request")
         }
     }
 

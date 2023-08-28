@@ -6,7 +6,7 @@ import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import org.github.overtane.soundbrowser.databinding.FragmentSoundItemBinding
 
-class SoundPagingDataAdapter(val clickListener: SoundItemClickListener) :
+class SoundPagingDataAdapter(private val clickListener: SoundItemClickListener) :
     PagingDataAdapter<SoundListItem, SoundItemViewHolder>(DIFFCALLBACK) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = SoundItemViewHolder(

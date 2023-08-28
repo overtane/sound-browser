@@ -33,6 +33,11 @@ class SoundDetailsViewModel(val id: Int) : ViewModel() {
         )
     }
 
+    override fun onCleared() {
+        super.onCleared()
+        mediaPlayer.release()
+    }
+
     fun onPlayButtonClicked() = when (state.value) {
         PlaybackState.STOPPED -> _state.update { PlaybackState.PLAYING }
         PlaybackState.PLAYING -> _state.update { PlaybackState.STOPPED }
@@ -51,10 +56,6 @@ class SoundDetailsViewModel(val id: Int) : ViewModel() {
             _state.update { PlaybackState.STOPPED }
         }
         PlaybackState.ERROR -> Unit
-    }
-
-    fun onUseSoundButtonClicked() {
-        /* use setFragmentResult to bundle up fragment result */
     }
 
     fun onDestroyView() {
