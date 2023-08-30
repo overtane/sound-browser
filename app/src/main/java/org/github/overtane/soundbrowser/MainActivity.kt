@@ -50,10 +50,6 @@ class MainActivity : AppCompatActivity() {
 
     companion object {
         const val TAG = "SoundBrowser"
-        private const val SOUND_REQUEST_CODE = 0x42
-        const val PACKAGE_NAME = BuildConfig.APPLICATION_ID
-        const val SOUND_REQUEST_KEY = "$PACKAGE_NAME.SOUND_REQUEST"
-        const val SOUND_REPLY_KEY = "$PACKAGE_NAME.SOUND_REPLY"
     }
 
 }

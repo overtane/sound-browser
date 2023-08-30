@@ -15,6 +15,7 @@ import org.github.overtane.soundbrowser.R
 import org.github.overtane.soundbrowser.databinding.FragmentSoundDetailsBinding
 import kotlinx.coroutines.launch
 import org.github.overtane.soundbrowser.MainActivity
+import org.github.overtane.soundbrowser.SOUND_REPLY_KEY
 
 class SoundDetailsDialog : DialogFragment() {
 
@@ -44,7 +45,7 @@ class SoundDetailsDialog : DialogFragment() {
 
             detailsUseSoundButton.setOnClickListener {
                 activity?.supportFragmentManager?.setFragmentResult(
-                    MainActivity.SOUND_REPLY_KEY,
+                    SOUND_REPLY_KEY,
                     myViewModel.fragmentResult()
                 )
                 dismiss()

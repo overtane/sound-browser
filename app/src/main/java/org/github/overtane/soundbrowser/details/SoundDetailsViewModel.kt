@@ -12,7 +12,11 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import org.github.overtane.soundbrowser.MainActivity
+import org.github.overtane.soundbrowser.SOUND_EXTRA_CHANNELS
+import org.github.overtane.soundbrowser.SOUND_EXTRA_DURATION
+import org.github.overtane.soundbrowser.SOUND_EXTRA_NAME
+import org.github.overtane.soundbrowser.SOUND_EXTRA_SAMPLE_RATE
+import org.github.overtane.soundbrowser.SOUND_EXTRA_URL
 
 class SoundDetailsViewModel(val id: Int) : ViewModel() {
 
@@ -65,11 +69,11 @@ class SoundDetailsViewModel(val id: Int) : ViewModel() {
 
     fun fragmentResult() = Bundle().apply {
         _details.value?.let {
-            this.putString(EXTRA_NAME, it.name)
-            this.putString(EXTRA_URL, it.url)
-            this.putInt(EXTRA_DURATION, it.duration.toInt())
-            this.putInt(EXTRA_CHANNELS, it.channels.toInt())
-            this.putInt(EXTRA_SAMPLE_RATE, it.samplerate.toInt())
+            this.putString(SOUND_EXTRA_NAME, it.name)
+            this.putString(SOUND_EXTRA_URL, it.url)
+            this.putInt(SOUND_EXTRA_DURATION, it.duration.toInt())
+            this.putInt(SOUND_EXTRA_CHANNELS, it.channels.toInt())
+            this.putInt(SOUND_EXTRA_SAMPLE_RATE, it.samplerate.toInt())
         }
     }
 
@@ -92,13 +96,6 @@ class SoundDetailsViewModel(val id: Int) : ViewModel() {
         }
     }
 
-    companion object {
-        private const val EXTRA_NAME = "${MainActivity.PACKAGE_NAME}.NAME"
-        private const val EXTRA_URL = "${MainActivity.PACKAGE_NAME}.URL"
-        private const val EXTRA_DURATION = "${MainActivity.PACKAGE_NAME}.DURATION"
-        private const val EXTRA_CHANNELS = "${MainActivity.PACKAGE_NAME}.CHANNELS"
-        private const val EXTRA_SAMPLE_RATE = "${MainActivity.PACKAGE_NAME}.SAMPLE_RATE"
-    }
 }
 
 class SoundDetailsViewModelFactory(
