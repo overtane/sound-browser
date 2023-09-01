@@ -25,6 +25,8 @@ class MainActivity : AppCompatActivity() {
         val appBarConfiguration = AppBarConfiguration(navController.graph)
         setupActionBarWithNavController(navController, appBarConfiguration)
 
+        setPendingIntent(intent)
+
         // Get selected sound in fragment result and pass it to pending intent component
         supportFragmentManager.setFragmentResultListener(SOUND_REPLY_KEY, this) { _, bundle ->
             val intent = Intent().apply {
@@ -38,14 +40,18 @@ class MainActivity : AppCompatActivity() {
 
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
-        intent?.extras?.let {
-            _pendingIntent = it.getParcelable(SOUND_REQUEST_KEY)
-            Log.d(TAG, "Got new intent request")
-        }
+        setPendingIntent(intent)
     }
 
     override fun onSupportNavigateUp(): Boolean {
         return navController.navigateUp() || super.onSupportNavigateUp()
+    }
+
+    private fun setPendingIntent(intent: Intent?) {
+        intent?.extras?.let {
+            _pendingIntent = it.getParcelable(SOUND_REQUEST_KEY)
+            Log.d(TAG, "Got new intent request")
+        }
     }
 
     companion object {
