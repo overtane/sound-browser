@@ -15,6 +15,7 @@ import kotlinx.coroutines.launch
 import org.github.overtane.soundbrowser.SOUND_EXTRA_CHANNELS
 import org.github.overtane.soundbrowser.SOUND_EXTRA_DURATION
 import org.github.overtane.soundbrowser.SOUND_EXTRA_NAME
+import org.github.overtane.soundbrowser.SOUND_EXTRA_PREVIEW
 import org.github.overtane.soundbrowser.SOUND_EXTRA_SAMPLE_RATE
 import org.github.overtane.soundbrowser.SOUND_EXTRA_URL
 
@@ -71,6 +72,7 @@ class SoundDetailsViewModel(val id: Int) : ViewModel() {
         _details.value?.let {
             this.putString(SOUND_EXTRA_NAME, it.name)
             this.putString(SOUND_EXTRA_URL, it.url)
+            this.putString(SOUND_EXTRA_PREVIEW, it.previewUrl)
             this.putInt(SOUND_EXTRA_DURATION, it.duration.toInt())
             this.putInt(SOUND_EXTRA_CHANNELS, it.channels.toInt())
             this.putInt(SOUND_EXTRA_SAMPLE_RATE, it.samplerate.toInt())

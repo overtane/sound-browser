@@ -12,7 +12,7 @@ import androidx.navigation.ui.setupActionBarWithNavController
 
 class MainActivity : AppCompatActivity() {
 
-    private lateinit var navController: NavController
+    private val navController: NavController by lazy { findNavController(R.id.nav_host_fragment) }
 
     private var _pendingIntent: PendingIntent? = null
     private val pendingIntent
@@ -21,9 +21,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        navController = findNavController(R.id.nav_host_fragment)
-        val appBarConfiguration = AppBarConfiguration(navController.graph)
-        setupActionBarWithNavController(navController, appBarConfiguration)
+        setupActionBarWithNavController(navController, AppBarConfiguration(navController.graph))
 
         setPendingIntent(intent)
 
